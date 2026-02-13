@@ -1,0 +1,58 @@
+services:
+  # Service PostgreSQL 15 (Tier 3 - Données)
+  db:
+    image: postgres:15
+    container_name: gestionnaire_taches_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-gestionnaire_taches}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Service Express.js (Tier 2 - Métier)
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: gestionnaire_taches_server
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3001}:3001"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-gestionnaire_taches}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      JWT_SECRET: ${JWT_SECRET:-change_me_with_a_strong_random_string_of_at_least_32_chars}
+      PORT: 3001
+      CLIENT_URL: http://localhost:3000
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Service React.js (Tier 1 - Présentation)
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: gestionnaire_taches_client
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_API_URL: http://localhost:3001/api
+    depends_on:
+      - server
+
+volumes:
+  pgdata:
