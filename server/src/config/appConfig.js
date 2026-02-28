@@ -37,15 +37,6 @@ class AppConfig {
     /** @type {string} URL du client autorisé pour CORS */
     this.clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
 
-    /** @type {Object} Configuration de la base de données */
-    this.database = {
-      host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT, 10) || 5432,
-      name: process.env.DB_NAME || 'gestionnaire_taches',
-      user: process.env.DB_USER || 'postgres',
-      password: process.env.DB_PASSWORD || 'postgres',
-    };
-
     /** @type {number} Limite par défaut pour la pagination */
     this.defaultPageLimit = 20;
 

@@ -122,12 +122,12 @@ app.use((err, req, res, next) => {
  */
 const startServer = async () => {
   try {
-    /** Tester la connexion à PostgreSQL */
+    /** Tester la connexion à SQLite */
     await databasePool.testConnection();
 
-    /** Synchroniser les modèles (en développement uniquement, les migrations gèrent la prod) */
+    /** Synchroniser les modèles (crée les tables automatiquement si elles n'existent pas) */
     const { sequelize } = require('./config/database');
-    await sequelize.sync({ alter: false });
+    await sequelize.sync({ alter: true });
 
     /** Démarrer le serveur HTTP */
     app.listen(appConfig.port, () => {

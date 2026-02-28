@@ -49,7 +49,7 @@ class ListeRepository {
         include: [
           [
             sequelize.literal(
-              '(SELECT COUNT(*) FROM taches WHERE taches.liste_id = "Liste".id)'
+              '(SELECT COUNT(*) FROM taches WHERE taches.liste_id = `Liste`.`id`)'
             ),
             'nombre_taches',
           ],

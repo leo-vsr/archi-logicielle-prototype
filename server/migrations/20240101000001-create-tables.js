@@ -15,14 +15,11 @@ module.exports = {
    * @param {import('sequelize').DataTypes} Sequelize - Types de données Sequelize.
    */
   async up(queryInterface, Sequelize) {
-    /** Activer l'extension uuid-ossp pour la génération d'UUID */
-    await queryInterface.sequelize.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
-
     /** Création de la table utilisateurs */
     await queryInterface.createTable('utilisateurs', {
       id: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.literal('uuid_generate_v4()'),
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
         allowNull: false,
       },
@@ -41,7 +38,7 @@ module.exports = {
       },
       date_creation: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('NOW()'),
+        defaultValue: Sequelize.NOW,
       },
       actif: {
         type: Sequelize.BOOLEAN,
@@ -57,7 +54,7 @@ module.exports = {
     await queryInterface.createTable('listes', {
       id: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.literal('uuid_generate_v4()'),
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
         allowNull: false,
       },
@@ -89,7 +86,7 @@ module.exports = {
     await queryInterface.createTable('taches', {
       id: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.literal('uuid_generate_v4()'),
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
         allowNull: false,
       },
@@ -115,7 +112,7 @@ module.exports = {
       },
       date_creation: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('NOW()'),
+        defaultValue: Sequelize.NOW,
       },
       date_completion: {
         type: Sequelize.DATE,
@@ -147,7 +144,7 @@ module.exports = {
     await queryInterface.createTable('historique_modifications', {
       id: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.literal('uuid_generate_v4()'),
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
         allowNull: false,
       },
@@ -171,7 +168,7 @@ module.exports = {
       },
       date_modification: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('NOW()'),
+        defaultValue: Sequelize.NOW,
       },
     });
 

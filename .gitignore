@@ -4,6 +4,9 @@ node_modules/
 # Environment variables
 .env
 
+# SQLite database
+server/data/*.sqlite
+
 # Logs
 *.log
 npm-debug.log*

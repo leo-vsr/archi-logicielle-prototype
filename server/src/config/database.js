@@ -1,11 +1,15 @@
 /**
- * @fileoverview Singleton DatabasePool - Pool de connexions Sequelize vers PostgreSQL.
+ * @fileoverview Singleton DatabasePool - Connexion Sequelize vers SQLite.
  * Pattern Singleton : une seule instance Sequelize partagée dans toute l'application.
  * Sert aussi de fichier de configuration pour sequelize-cli (migrations).
  * @module config/database
  */
 
+const path = require('path');
 const { Sequelize } = require('sequelize');
+
+/** @description Chemin vers le fichier SQLite */
+const storagePath = path.resolve(__dirname, '../../data/database.sqlite');
 
 /**
  * @description Configuration de la base de données pour sequelize-cli.
@@ -13,21 +17,13 @@ const { Sequelize } = require('sequelize');
  */
 const dbConfig = {
   development: {
-    username: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD || 'postgres',
-    database: process.env.DB_NAME || 'gestionnaire_taches',
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT, 10) || 5432,
-    dialect: 'postgres',
+    dialect: 'sqlite',
+    storage: storagePath,
     logging: false,
   },
   production: {
-    username: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD || 'postgres',
-    database: process.env.DB_NAME || 'gestionnaire_taches',
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT, 10) || 5432,
-    dialect: 'postgres',
+    dialect: 'sqlite',
+    storage: storagePath,
     logging: false,
   },
 };
@@ -51,27 +47,15 @@ class DatabasePool {
     const config = dbConfig[env];
 
     /** @type {Sequelize} Instance Sequelize unique */
-    this.sequelize = new Sequelize(
-      config.database,
-      config.username,
-      config.password,
-      {
-        host: config.host,
-        port: config.port,
-        dialect: config.dialect,
-        logging: config.logging,
-        pool: {
-          max: 10,
-          min: 2,
-          acquire: 30000,
-          idle: 10000,
-        },
-        define: {
-          timestamps: false,
-          underscored: true,
-        },
-      }
-    );
+    this.sequelize = new Sequelize({
+      dialect: config.dialect,
+      storage: config.storage,
+      logging: config.logging,
+      define: {
+        timestamps: false,
+        underscored: true,
+      },
+    });
 
     DatabasePool._instance = this;
   }
@@ -85,9 +69,9 @@ class DatabasePool {
   async testConnection() {
     try {
       await this.sequelize.authenticate();
-      console.log('[OK] Connexion à PostgreSQL établie avec succès.');
+      console.log('[OK] Connexion à SQLite établie avec succès.');
     } catch (error) {
-      console.error('[ERREUR] Impossible de se connecter à PostgreSQL :', error.message);
+      console.error('[ERREUR] Impossible de se connecter à SQLite :', error.message);
       throw error;
     }
   }

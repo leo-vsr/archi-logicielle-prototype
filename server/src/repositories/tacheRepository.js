@@ -66,7 +66,7 @@ class TacheRepository {
     return await Tache.findAndCountAll({
       where,
       include: [{ model: Liste, as: 'liste', attributes: ['id', 'nom', 'couleur'] }],
-      order: [[literal('date_echeance IS NULL'), 'ASC'], ['date_echeance', 'ASC'], ['date_creation', 'DESC']],
+      order: [[literal("CASE WHEN date_echeance IS NULL THEN 1 ELSE 0 END"), 'ASC'], ['date_echeance', 'ASC'], ['date_creation', 'DESC']],
       limit,
       offset,
     });
@@ -106,8 +106,8 @@ class TacheRepository {
       where: {
         utilisateur_id: utilisateurId,
         [Op.or]: [
-          { titre: { [Op.iLike]: `%${recherche}%` } },
-          { description: { [Op.iLike]: `%${recherche}%` } },
+          { titre: { [Op.like]: `%${recherche}%` } },
+          { description: { [Op.like]: `%${recherche}%` } },
         ],
       },
       include: [{ model: Liste, as: 'liste', attributes: ['id', 'nom', 'couleur'] }],
