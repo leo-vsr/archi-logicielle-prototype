@@ -29,6 +29,21 @@ api.interceptors.request.use((config) => {
 });
 
 /**
+ * @description Intercepteur de réponse : déconnexion automatique si le token est invalide ou expiré (401).
+ */
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('utilisateur');
+      window.location.reload();
+    }
+    return Promise.reject(error);
+  }
+);
+
+/**
  * @namespace taskService
  * @description Service gérant les appels API des tâches et des listes.
  */
